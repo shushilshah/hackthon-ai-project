@@ -5,8 +5,6 @@ pyspellchecker
 langchain
 openai
 streamlit
-tiktoken
 unstructured
-requests
 streamlit-quill
-SpeechRecognition
+python-dotenv
