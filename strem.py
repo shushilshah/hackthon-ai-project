@@ -10,6 +10,7 @@ turboline_url = 'https://api.turboline.ai/openai/chat/completions'
 # Initialize SpellChecker
 spell = SpellChecker()
 
+
 # Function to call Turboline API for text summarization
 
 
@@ -73,6 +74,37 @@ def lang_translate(content, model='gpt-4o-mini'):
         return "Error in translation"
 
 
+# Fact checking implementation with Turboline api
+
+def fact_check(content, model="gpt-4o-mini"):
+    headers = {
+        'X-TL-Key': turboline_api_key,
+        'Content-Type': 'application/json'
+    }
+    data = {
+        "model": model,
+        "messages": [
+            {
+                "role": "system",
+                "content": "You are a helpful assitant that fact-checks statement"
+            },
+            {
+                "role": "user",
+                "content": f"fact check the following statement: \'{content}' and explain if it is true or false."
+            }
+        ]
+    }
+
+    response = requests.post(turboline_url, headers=headers, json=data)
+
+    # check for succesful response
+    if response.status_code == 200:
+        result = response.json()
+        return result['choices'][0]['message']['content'].strip()
+    else:
+        return f"Error: {response.status_code} - {response.text}"
+
+
 # Function to check spelling of the text
 
 
@@ -83,19 +115,26 @@ def check_spelling(text):
 
 
 # Streamlit UI setup
-st.title("Collaborative Content Creation Tool")
+
+st.set_page_config(layout="wide")
+st.title("Content Creation Collaboration")
 
 # Create a Quill editor in the Streamlit app
 editor_content = st_quill()
 
+
+button_col1, button_col2, button_col3 = st.columns(3)
+
 # Button to summarize the content
-if st.button("Summarize Text"):
-    if editor_content:
-        summary = summarize_text(editor_content)
-        st.subheader("Summary")
-        st.write(summary)
-    else:
-        st.error("Please enter some content to summarize.")
+
+with button_col1:
+    if st.button("Summarize Text"):
+        if editor_content:
+            summary = summarize_text(editor_content)
+            st.subheader("Summary")
+            st.write(summary)
+        else:
+            st.error("Please enter some content to summarize.")
 
 
 # Button to check spelling of the content
@@ -111,10 +150,22 @@ if st.button("Summarize Text"):
 #     else:
 #         st.error("Please enter some content to check spelling.")
 
-if st.button("Translate"):
-    if editor_content:
-        translated = lang_translate(editor_content)
-        st.subheader("Translation")
-        st.write(translated)
-    else:
-        st.error("Not tranlated")
+
+with button_col2:
+    if st.button("Translate"):
+        if editor_content:
+            translated = lang_translate(editor_content)
+            st.subheader("Translation")
+            st.write(translated)
+        else:
+            st.error("Not tranlated")
+
+
+with button_col3:
+    if st.button("Fact Check"):
+        if editor_content:
+            check = fact_check(editor_content)
+            st.subheader("Actual Fact")
+            st.write(check)
+        else:
+            st.error("Error in something")
