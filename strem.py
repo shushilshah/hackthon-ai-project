@@ -1,11 +1,15 @@
 import streamlit as st
+import os
 from streamlit_quill import st_quill
 import requests
 from spellchecker import SpellChecker
+from dotenv import load_dotenv
 
+
+load_dotenv()
 # Turboline API details
-turboline_api_key = '7a202888c4b845b9b7c2a0a09e8850a7'
-turboline_url = 'https://api.turboline.ai/openai/chat/completions'
+turboline_api_key = os.getenv('TURBOLINE_API_KEY')
+turboline_url = os.getenv('TURBOLINE_API_URL')
 
 # Initialize SpellChecker
 spell = SpellChecker()
