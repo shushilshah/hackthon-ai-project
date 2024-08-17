@@ -41,6 +41,38 @@ def summarize_text(content, model="gpt-4o-mini"):
             f"An error occurred: {response.status_code} - {response.text}")
         return "Error in summarization"
 
+# API implementation for language translations
+
+
+def lang_translate(content, model='gpt-4o-mini'):
+    headers = {
+        'X-TL-Key': turboline_api_key,
+        'Content-Type': 'application/json'
+    }
+    data = {
+        'model': model,
+        "messages": [
+            {
+                'role': 'user',
+                'content': f"Translate the following text into Nepali language:\n\n{content}"
+            }
+        ]
+    }
+
+    response_trans = requests.post(
+        turboline_url, headers=headers, json=data)
+
+    if response_trans.status_code == 200:
+        response_trans_data = response_trans.json()
+        translation = response_trans_data.get('choices', [])[0].get(
+            'message', {}).get('content', '').strip()
+        return translation
+    else:
+        st.error(
+            f"An error occured: {response_trans.status_code} - {response_trans.text}")
+        return "Error in translation"
+
+
 # Function to check spelling of the text
 
 
@@ -65,6 +97,7 @@ if st.button("Summarize Text"):
     else:
         st.error("Please enter some content to summarize.")
 
+
 # Button to check spelling of the content
 # if st.button("Check Spelling"):
 #     if editor_content:
@@ -77,3 +110,11 @@ if st.button("Summarize Text"):
 #             st.write("No spelling mistakes found.")
 #     else:
 #         st.error("Please enter some content to check spelling.")
+
+if st.button("Translate"):
+    if editor_content:
+        translated = lang_translate(editor_content)
+        st.subheader("Translation")
+        st.write(translated)
+    else:
+        st.error("Not tranlated")
