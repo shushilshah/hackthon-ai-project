@@ -1,0 +1,11 @@
+Flask
+Flask-SocketIO
+requests
+pyspellchecker
+langchain
+openai
+streamlit
+tiktoken
+unstructured
+requests
+streamlit-quill
