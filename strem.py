@@ -120,7 +120,15 @@ def check_spelling(text):
 # Streamlit UI setup
 
 st.set_page_config(layout="wide")
-st.title("Content Creation Collaboration")
+col1, col2 = st.columns([8, 1])  # Adjust the ratio as needed
+
+# Place title in the first column
+with col1:
+    st.title("Content Creation Collaboration")
+
+# Place button in the second column
+with col2:
+    st.button("Add Friend")
 
 # Create a Quill editor in the Streamlit app
 editor_content = st_quill()
